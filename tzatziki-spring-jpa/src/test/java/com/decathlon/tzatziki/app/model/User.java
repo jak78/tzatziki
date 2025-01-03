@@ -1,17 +1,12 @@
 package com.decathlon.tzatziki.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.time.Instant;
+import com.decathlon.tzatziki.utils.IdentityOrAssignedGenerator;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.time.Instant;
 
 import static jakarta.persistence.InheritanceType.JOINED;
 
@@ -23,7 +18,8 @@ import static jakarta.persistence.InheritanceType.JOINED;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "identity_or_assigned")
+    @GenericGenerator(name = "identity_or_assigned", type = IdentityOrAssignedGenerator.class)
     Integer id;
 
     @Column(name = "first_name")

@@ -1,13 +1,10 @@
 package com.decathlon.tzatziki.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.decathlon.tzatziki.utils.IdentityOrAssignedGenerator;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 @NoArgsConstructor
 @Getter
@@ -15,7 +12,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "evilness")
 public class Evilness {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "identity_or_assigned")
+    @GenericGenerator(name = "identity_or_assigned", type = IdentityOrAssignedGenerator.class)
     Integer id;
     @Column(
             name = "evil"

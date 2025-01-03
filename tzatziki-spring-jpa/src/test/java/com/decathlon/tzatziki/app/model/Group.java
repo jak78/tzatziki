@@ -1,15 +1,12 @@
 package com.decathlon.tzatziki.app.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import java.util.List;
+import com.decathlon.tzatziki.utils.IdentityOrAssignedGenerator;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -18,7 +15,8 @@ import lombok.NoArgsConstructor;
 public class Group {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "identity_or_assigned")
+    @GenericGenerator(name = "identity_or_assigned", type = IdentityOrAssignedGenerator.class)
     Integer id;
 
     @Column(name = "name")
