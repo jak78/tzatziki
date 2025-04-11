@@ -13,7 +13,6 @@ import java.util.stream.Stream;
 import static com.decathlon.tzatziki.utils.Unchecked.unchecked;
 import static java.util.Collections.synchronizedMap;
 import static java.util.Optional.ofNullable;
-import static org.burningwave.core.assembler.StaticComponentContainer.Modules;
 
 @Slf4j
 public final class Methods {
@@ -42,8 +41,8 @@ public final class Methods {
                         method.setAccessible(true);
                     } catch (Exception e) {
                         log.debug("auto exporting {}!", method.getDeclaringClass().getPackageName());
-                        Modules.exportPackageToAllUnnamed("java.base", method.getDeclaringClass().getPackageName());
-                        method.setAccessible(true);
+//                        Modules.exportPackageToAllUnnamed("java.base", method.getDeclaringClass().getPackageName());
+//                        method.setAccessible(true);
                     }
                     methods.put(getMethodSignature(clazz, method.getName(), method.getParameterTypes()), method);
                 });

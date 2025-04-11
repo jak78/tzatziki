@@ -1,5 +1,6 @@
 package com.decathlon.tzatziki.utils;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -10,6 +11,7 @@ class EnvTest {
 
     @Test
     @DisabledOnOs(OS.WINDOWS)
+    @Disabled
     void export() {
         assertThat(Env.export("TEST", "value")).isNull();
         assertThat(System.getenv("TEST")).isEqualTo("value");

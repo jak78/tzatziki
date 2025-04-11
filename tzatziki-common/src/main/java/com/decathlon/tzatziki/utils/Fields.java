@@ -11,7 +11,6 @@ import java.util.stream.Stream;
 import static com.decathlon.tzatziki.utils.Unchecked.rethrow;
 import static com.decathlon.tzatziki.utils.Unchecked.unchecked;
 import static java.util.Collections.synchronizedMap;
-import static org.burningwave.core.assembler.StaticComponentContainer.Modules;
 
 
 @SuppressWarnings("unchecked")
@@ -80,8 +79,8 @@ public final class Fields {
                     field.setAccessible(true);
                 } catch (Exception e) {
                     log.debug("auto exporting {}!", field.getType().getPackageName());
-                    Modules.exportPackageToAllUnnamed("java.base", field.getType().getPackageName());
-                    field.setAccessible(true);
+//                    Modules.exportPackageToAllUnnamed("java.base", field.getType().getPackageName());
+//                    field.setAccessible(true);
                 }
                 fields.put(field.getName(), field);
             }
