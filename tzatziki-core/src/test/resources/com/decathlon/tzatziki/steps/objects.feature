@@ -231,7 +231,48 @@ Feature: to interact with objects in the context
             - "3039606203C7F24000053623"
             - "3039606203C7F24000053624"
       """
-
+  Scenario: assert of cyclic graphs
+    Given that order is an com.decathlon.tzatziki.cycle.Order:
+        """yml
+        id: 1
+        name: order1
+        orderLines:
+          - id: 1
+            sku: abcdef
+            quantity: 42
+          - id: 2
+            sku: ghijkl
+            quantity: 21
+        """
+    And orderLines reference order
+    Then order is equal to:
+      """yml
+        id: 1
+        name: order1
+        orderLines:
+          - id: 1
+            sku: abcdef
+            quantity: 42
+            order: ?isNull
+          - id: 2
+            sku: ghijkl
+            quantity: 21
+            order: ?isNull
+      """
+    Then order is equal to:
+    """yml
+        id: 1
+        name: order1
+        orderLines:
+          - id: 1
+            sku: abcdef
+            quantity: 42
+            order: ?isNull
+          - id: 2
+            sku: ghijkl
+            quantity: 21
+            order: ?isNull
+     """
   @someTag
   Scenario: we can access the tags in a scenario
     * _scenario.sourceTagNames[0] == "@someTag"
