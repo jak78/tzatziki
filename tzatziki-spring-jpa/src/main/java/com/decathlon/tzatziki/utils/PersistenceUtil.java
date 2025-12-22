@@ -19,12 +19,31 @@ public class PersistenceUtil {
         Class<?> tableClass = getPersistenceClass("Table");
         Class<Module> mapperModuleClass;
 
-        if (tableClass.getPackageName().equals("javax.persistence"))
+        // Detect Hibernate version
+        boolean isHibernate6 = isHibernate6Available();
+
+        if (tableClass.getPackageName().equals("javax.persistence")) {
+            // javax.persistence + Hibernate 5
             mapperModuleClass = unchecked(() -> (Class<Module>) Class.forName("com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module"));
-        else
+        } else if (isHibernate6) {
+            // jakarta.persistence + Hibernate 6 (Spring Boot 3.4+ / 4.x)
+            mapperModuleClass = unchecked(() -> (Class<Module>) Class.forName("com.fasterxml.jackson.datatype.hibernate6.Hibernate6Module"));
+        } else {
+            // jakarta.persistence + Hibernate 5 (Spring Boot 3.0-3.3)
             mapperModuleClass = unchecked(() -> (Class<Module>) Class.forName("com.fasterxml.jackson.datatype.hibernate5.jakarta.Hibernate5JakartaModule"));
+        }
 
         return unchecked(() -> mapperModuleClass.getConstructor().newInstance());
+    }
+
+    private static boolean isHibernate6Available() {
+        try {
+            // Try to load a Hibernate 6 specific class
+            Class.forName("org.hibernate.query.criteria.JpaCriteriaQuery");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 
     public static <T> Class<T> getPersistenceClass(String className) {

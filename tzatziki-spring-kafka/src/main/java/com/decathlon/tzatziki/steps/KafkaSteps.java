@@ -31,8 +31,6 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
-import org.springframework.kafka.test.EmbeddedKafkaZKBroker;
-import org.springframework.util.concurrent.ListenableFuture;
 
 import java.time.Duration;
 import java.util.*;
@@ -59,7 +57,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class KafkaSteps {
 
     public static final String RECORD = "(json messages?|" + VARIABLE_PATTERN + ")";
-    private static final EmbeddedKafkaBroker embeddedKafka = new EmbeddedKafkaZKBroker(1, true, 1);
+    // Use EmbeddedKafkaBroker directly for Spring Boot 3 & 4 compatibility
+    private static final EmbeddedKafkaBroker embeddedKafka = createEmbeddedKafka();
 
     private static final Map<String, List<Consumer<Object, Object>>> avroJacksonConsumers = new LinkedHashMap<>();
     private static final Map<String, Consumer<?, GenericRecord>> avroConsumers = new LinkedHashMap<>();
@@ -590,10 +589,44 @@ public class KafkaSteps {
                         Use GenericRecord for Avro or String for JSON as KEY and VALUE types.""")
                 .isNotNull();
         Object sendReturn = Methods.invokeUnchecked(kafkaTemplate, Methods.getMethod(KafkaTemplate.class, "send", ProducerRecord.class), producerRecord);
-        CompletableFuture<SendResult<K, V>> future = sendReturn instanceof ListenableFuture listenableFuture
-                ? listenableFuture.completable()
-                : (CompletableFuture<SendResult<K, V>>) sendReturn;
+        
+        // Handle both ListenableFuture (Spring Boot 3) and CompletableFuture (Spring Boot 4)
+        CompletableFuture<SendResult<K, V>> future;
+        if (sendReturn instanceof CompletableFuture) {
+            future = (CompletableFuture<SendResult<K, V>>) sendReturn;
+        } else {
+            // Spring Boot 3 returns ListenableFuture, convert to CompletableFuture
+            try {
+                future = (CompletableFuture<SendResult<K, V>>) sendReturn.getClass().getMethod("completable").invoke(sendReturn);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to convert future to CompletableFuture", e);
+            }
+        }
 
         return future.join();
+    }
+
+    /**
+     * Creates an EmbeddedKafkaBroker compatible with both Spring Boot 3 and 4.
+     * In Spring Boot 3, EmbeddedKafkaZKBroker is available.
+     * In Spring Boot 4, only EmbeddedKafkaBroker exists.
+     */
+    private static EmbeddedKafkaBroker createEmbeddedKafka() {
+        try {
+            // Try Spring Boot 3 constructor first (EmbeddedKafkaZKBroker)
+            Class<?> zkBrokerClass = Class.forName("org.springframework.kafka.test.EmbeddedKafkaZKBroker");
+            return (EmbeddedKafkaBroker) zkBrokerClass.getConstructor(int.class, boolean.class, int.class)
+                    .newInstance(1, true, 1);
+        } catch (ClassNotFoundException e) {
+            // Spring Boot 4: use EmbeddedKafkaBroker directly
+            try {
+                return EmbeddedKafkaBroker.class.getConstructor(int.class, boolean.class, int.class)
+                        .newInstance(1, true, 1);
+            } catch (Exception ex) {
+                throw new RuntimeException("Failed to create EmbeddedKafkaBroker", ex);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create EmbeddedKafkaBroker", e);
+        }
     }
 }

@@ -47,6 +47,10 @@
         <zookeeper.version>3.9.4</zookeeper.version>
         <sonar.organization>decathlon</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <!-- Spring Boot version - supports both 3.5.9 and 4.0.1 -->
+        <spring-boot.version>4.0.1</spring-boot.version>
+        <!-- Spring Cloud version - automatically selects based on Spring Boot version -->
+        <spring-cloud.version>2025.1.0</spring-cloud.version>
     </properties>
 
     <licenses>
@@ -82,7 +86,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2025.1.0</version>
+                <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -90,7 +94,7 @@
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.5.9</version>
+                <version>${spring-boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -115,6 +119,11 @@
                 <version>${cucumber.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>6.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -210,6 +219,25 @@
         </plugins>
     </build>
     <profiles>
+        <!-- Spring Boot 3.5.9 profile -->
+        <profile>
+            <id>spring-boot-3</id>
+            <properties>
+                <spring-boot.version>3.5.9</spring-boot.version>
+                <spring-cloud.version>2025.0.0</spring-cloud.version>
+            </properties>
+        </profile>
+        <!-- Spring Boot 4.0.1 profile (default) -->
+        <profile>
+            <id>spring-boot-4</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring-boot.version>4.0.1</spring-boot.version>
+                <spring-cloud.version>2025.1.0</spring-cloud.version>
+            </properties>
+        </profile>
         <profile>
             <id>sonatypeDeploy</id>
             <!-- Based on: https://central.sonatype.org/pages/apache-maven.html-->
