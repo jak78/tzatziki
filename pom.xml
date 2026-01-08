@@ -51,6 +51,8 @@
         <spring-boot.version>4.0.1</spring-boot.version>
         <!-- Spring Cloud version - automatically selects based on Spring Boot version -->
         <spring-cloud.version>2025.1.0</spring-cloud.version>
+        <!-- RestAssured version - depends on Jackson version (2 for Boot 3, 3 for Boot 4) -->
+        <rest-assured.version>6.0.0</rest-assured.version>
     </properties>
 
     <licenses>
@@ -123,7 +125,7 @@
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
-                <version>6.0.0</version>
+                <version>${rest-assured.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -225,6 +227,8 @@
             <properties>
                 <spring-boot.version>3.5.9</spring-boot.version>
                 <spring-cloud.version>2025.0.0</spring-cloud.version>
+                <!-- RestAssured 5.x for Jackson 2 (used by Spring Boot 3) -->
+                <rest-assured.version>5.5.0</rest-assured.version>
             </properties>
         </profile>
         <!-- Spring Boot 4.0.1 profile (default) -->
@@ -236,6 +240,8 @@
             <properties>
                 <spring-boot.version>4.0.1</spring-boot.version>
                 <spring-cloud.version>2025.1.0</spring-cloud.version>
+                <!-- RestAssured 6.x for Jackson 3 (used by Spring Boot 4) -->
+                <rest-assured.version>6.0.0</rest-assured.version>
             </properties>
         </profile>
         <profile>

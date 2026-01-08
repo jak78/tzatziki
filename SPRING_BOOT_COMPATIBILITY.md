@@ -72,11 +72,21 @@ To verify your application works with both Spring Boot versions:
    mvn clean test -Pspring-boot-4
    ```
 
+Both test suites pass successfully with all modules.
+
 ## Version Matrix
 
-| Spring Boot Version | Spring Cloud Version | Hibernate Version | Jackson Hibernate Module |
-|---------------------|----------------------|-------------------|-------------------------|
-| 3.5.9 | 2025.0.0 (Northfields) | 6.x | jackson-datatype-hibernate6 |
-| 4.0.1 | 2025.1.0 (Oakwood) | 6.x | jackson-datatype-hibernate6 |
+| Spring Boot Version | Spring Cloud Version | Hibernate Version | Jackson Hibernate Module | RestAssured Version |
+|---------------------|----------------------|-------------------|-------------------------|---------------------|
+| 3.5.9 | 2025.0.0 (Northfields) | 6.x | jackson-datatype-hibernate6 | 5.5.0 (Jackson 2) |
+| 4.0.1 | 2025.1.0 (Oakwood) | 6.x | jackson-datatype-hibernate6 | 6.0.0 (Jackson 3) |
 
 Both versions now use Hibernate 6 as Spring Boot 3.4+ upgraded to Hibernate 6.
+
+### RestAssured Compatibility
+
+The library automatically selects the correct RestAssured version based on the Spring Boot profile:
+- **RestAssured 5.5.0** for Spring Boot 3 (compatible with Jackson 2)
+- **RestAssured 6.0.0** for Spring Boot 4 (compatible with Jackson 3)
+
+This ensures HTTP testing with the `tzatziki-http-mockserver-legacy` module works correctly across both Spring Boot versions.
